@@ -17,8 +17,8 @@
 
 Name:              nginx
 Epoch:             1
-Version:           1.9.4
-Release:           2%{?dist}
+Version:           1.9.5
+Release:           1%{?dist}
 
 Summary:           A high performance web server and reverse proxy server
 Group:             System Environment/Daemons
@@ -119,7 +119,7 @@ export DESTDIR=%{buildroot}
 %endif
     --with-ipv6 \
     --with-http_ssl_module \
-    --with-http_spdy_module \
+    --with-http_v2_module \
     --with-http_realip_module \
     --with-http_addition_module \
     --with-http_xslt_module \
@@ -136,6 +136,9 @@ export DESTDIR=%{buildroot}
     --with-http_degradation_module \
     --with-http_stub_status_module \
     --with-http_perl_module \
+    --with-threads \
+    --with-stream \
+    --with-stream_ssl_module \
     --with-mail \
     --with-mail_ssl_module \
     --with-pcre \
@@ -265,6 +268,15 @@ rm -rf $RPM_BUILD_DIR/nginx-%{version}
 %dir %{nginx_confdir}/default.d
 
 %changelog
+* Fri Oct 09 2015 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.5-1
+- New upstream release.
+- Replacing http_spdy module to http_v2 module
+- Enabling the following options:
+  --with-http_gunzip_module
+  --with-threads
+  --with-stream
+  --with-stream_ssl_module
+
 * Fri Aug 21 2015 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.4-2
 - Update third party modules.
 
