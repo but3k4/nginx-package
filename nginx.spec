@@ -17,7 +17,7 @@
 
 Name:              nginx
 Epoch:             1
-Version:           1.9.5
+Version:           1.9.6
 Release:           1%{?dist}
 
 Summary:           A high performance web server and reverse proxy server
@@ -268,6 +268,9 @@ rm -rf $RPM_BUILD_DIR/nginx-%{version}
 %dir %{nginx_confdir}/default.d
 
 %changelog
+* Mon Nov 09 2015 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.6-1
+- New upstream release.
+
 * Fri Oct 09 2015 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.5-1
 - New upstream release.
 - Replacing http_spdy module to http_v2 module
