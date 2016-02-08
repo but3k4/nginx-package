@@ -3,7 +3,7 @@ You can use these files to build Docker containers and then, build your NginX pa
 - CentOS: 
 
 cd centos
-docker build -t nginx-centos:test .
+docker build -t nginx-centos:build .
 docker run -h centos7.buildserver -i -t nginx-centos:build /bin/bash
 
 cd nginx-package
@@ -12,7 +12,7 @@ make rpm
 - Debian:
 
 cd debian
-docker build -t nginx-debian:test .
+docker build -t nginx-debian:build .
 docker run -h jessie.buildserver -i -t nginx-debian:build /bin/bash
 
 cd nginx-package
