@@ -17,7 +17,7 @@
 
 Name:              nginx
 Epoch:             1
-Version:           1.9.9
+Version:           1.9.10
 Release:           1%{?dist}
 
 Summary:           A high performance web server and reverse proxy server
@@ -29,6 +29,10 @@ URL:               http://nginx.org/
 
 Source0:           http://nginx.org/download/nginx-%{version}.tar.gz
 Source1:           modules.tar.gz
+Source2:           nginx.init
+Source5:           default.conf
+Source6:           ssl.conf
+Source8:           nginx.sysconfig
 Source10:          nginx.service
 Source11:          nginx.logrotate
 Source12:          nginx.conf
@@ -67,10 +71,16 @@ Requires:          perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $ve
 Requires(pre):     nginx-filesystem
 Provides:          webserver
 
+%if 0%{?rhel} >= 7
 BuildRequires:     systemd
 Requires(post):    systemd
 Requires(preun):   systemd
 Requires(postun):  systemd
+%else
+Requires(post):    chkconfig
+Requires(preun):   chkconfig, initscripts
+Requires(postun):  initscripts
+%endif
 
 %description
 Nginx is a web server and a reverse proxy server for HTTP, SMTP, POP3 and
@@ -110,7 +120,11 @@ export DESTDIR=%{buildroot}
     --http-fastcgi-temp-path=%{nginx_home_tmp}/fastcgi \
     --http-uwsgi-temp-path=%{nginx_home_tmp}/uwsgi \
     --http-scgi-temp-path=%{nginx_home_tmp}/scgi \
+%if 0%{?rhel} >= 7
     --pid-path=/run/nginx.pid \
+%else
+    --pid-path=%{_localstatedir}/run/nginx.pid \
+%endif
     --lock-path=/run/lock/subsys/nginx \
     --user=%{nginx_user} \
     --group=%{nginx_group} \
@@ -169,8 +183,15 @@ find %{buildroot} -type f -name .packlist -exec rm -f '{}' \;
 find %{buildroot} -type f -name perllocal.pod -exec rm -f '{}' \;
 find %{buildroot} -type f -empty -exec rm -f '{}' \;
 find %{buildroot} -type f -iname '*.so' -exec chmod 0755 '{}' \;
+%if 0%{?rhel} >= 7
 install -p -D -m 0644 %{SOURCE10} \
     %{buildroot}%{_unitdir}/nginx.service
+%else
+install -p -D -m 0755 %{SOURCE2} \
+    %{buildroot}%{_initrddir}/nginx
+install -p -D -m 0644 %{SOURCE8} \
+    %{buildroot}%{_sysconfdir}/sysconfig/nginx
+%endif
 
 install -p -D -m 0644 %{SOURCE11} \
     %{buildroot}%{_sysconfdir}/logrotate.d/nginx
@@ -184,6 +205,8 @@ install -p -d -m 0755 %{buildroot}%{nginx_webroot}
 
 install -p -m 0644 %{SOURCE12} \
     %{buildroot}%{nginx_confdir}
+install -p -m 0644 %{SOURCE5} %{SOURCE6} \
+    %{buildroot}%{nginx_confdir}/conf.d
 install -p -m 0644 %{SOURCE100} \
     %{buildroot}%{nginx_webroot}
 install -p -m 0644 %{SOURCE101} %{SOURCE102} \
@@ -194,8 +217,12 @@ install -p -m 0644 %{SOURCE103} %{SOURCE104} \
 install -p -D -m 0644 %{_builddir}/nginx-%{version}/man/nginx.8 \
     %{buildroot}%{_mandir}/man8/nginx.8
 
+%if 0%{?rhel} >= 7
 install -p -D -m 0755 %{SOURCE13} %{buildroot}%{_bindir}/nginx-upgrade
 install -p -D -m 0644 %{SOURCE14} %{buildroot}%{_mandir}/man8/nginx-upgrade.8
+%else
+sed -i '/^pid/s/\/run/\/var\/run/g' %{buildroot}%{nginx_confdir}/nginx.conf
+%endif
 
 for i in ftdetect indent syntax; do
     install -p -D -m644 contrib/vim/${i}/nginx.vim \
@@ -210,16 +237,41 @@ getent passwd %{nginx_user} > /dev/null || \
 exit 0
 
 %post
+%if 0%{?rhel} >= 7
 %systemd_post nginx.service
+%else
+if [ $1 -eq 1 ]; then
+    /sbin/chkconfig --add %{name}
+fi
+if [ $1 -eq 2 ]; then
+    # Make sure these directories are not world readable.
+    chmod 700 %{nginx_home}
+    chmod 700 %{nginx_home_tmp}
+    chmod 700 %{nginx_logdir}
+fi
+%endif
 
 %preun
+%if 0%{?rhel} >= 7
 %systemd_preun nginx.service
+%else
+if [ $1 -eq 0 ]; then
+    /sbin/service %{name} stop >/dev/null 2>&1
+    /sbin/chkconfig --del %{name}
+fi
+%endif
 
 %postun
+%if 0%{?rhel} >= 7
 %systemd_postun nginx.service
 if [ $1 -ge 1 ]; then
     /usr/bin/nginx-upgrade >/dev/null 2>&1 || :
 fi
+%else
+if [ $1 -eq 2 ]; then
+    /sbin/service %{name} upgrade || :
+fi
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -228,15 +280,19 @@ rm -rf $RPM_BUILD_DIR/nginx-%{version}
 %files
 %doc LICENSE CHANGES README
 %{nginx_datadir}/html/*
-%{_bindir}/nginx-upgrade
 %{_sbindir}/nginx
 %{_datadir}/vim/vimfiles/ftdetect/nginx.vim
 %{_datadir}/vim/vimfiles/syntax/nginx.vim
 %{_datadir}/vim/vimfiles/indent/nginx.vim
 %{_mandir}/man3/nginx.3pm*
 %{_mandir}/man8/nginx.8*
+%if 0%{?rhel} >= 7
+%{_bindir}/nginx-upgrade
 %{_mandir}/man8/nginx-upgrade.8*
 %{_unitdir}/nginx.service
+%else
+%config(noreplace) %{_sysconfdir}/sysconfig/nginx
+%endif
 %config(noreplace) %{nginx_confdir}/fastcgi.conf
 %config(noreplace) %{nginx_confdir}/fastcgi.conf.default
 %config(noreplace) %{nginx_confdir}/fastcgi_params
@@ -253,6 +309,7 @@ rm -rf $RPM_BUILD_DIR/nginx-%{version}
 %config(noreplace) %{nginx_confdir}/uwsgi_params.default
 %config(noreplace) %{nginx_confdir}/win-utf
 %config(noreplace) %{_sysconfdir}/logrotate.d/nginx
+%config(noreplace) %{nginx_confdir}/conf.d/*.conf
 %dir %{perl_vendorarch}/auto/nginx
 %{perl_vendorarch}/nginx.pm
 %{perl_vendorarch}/auto/nginx/nginx.so
@@ -266,8 +323,14 @@ rm -rf $RPM_BUILD_DIR/nginx-%{version}
 %dir %{nginx_confdir}
 %dir %{nginx_confdir}/conf.d
 %dir %{nginx_confdir}/default.d
+%if 0%{?rhel} < 7
+%{_initrddir}/nginx
+%endif
 
 %changelog
+* Mon Feb 08 2016 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.10-1
+- New upstream release.
+
 * Fri Jan 15 2016 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.9-1
 - New upstream release.
 
@@ -282,6 +345,7 @@ rm -rf $RPM_BUILD_DIR/nginx-%{version}
   --with-threads
   --with-stream
   --with-stream_ssl_module
+- Fixing spec file to work with both rhel 6 and 7.
 
 * Fri Aug 21 2015 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.4-2
 - Update third party modules.

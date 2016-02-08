@@ -16,11 +16,11 @@ RPM:
 
 DEB:
 	mkdir -p ${TOPDIR}
-	cp -a src/nginx-1.9.9.tar.gz ${TOPDIR}/nginx_1.9.9.orig.tar.gz
-	cp -a src/debian.tar.xz ${TOPDIR}/nginx_1.9.9-1.debian.tar.xz
-	tar -xvzf ${TOPDIR}/nginx_1.9.9.orig.tar.gz -C ${TOPDIR}/
-	tar -xvJf ${TOPDIR}/nginx_1.9.9-1.debian.tar.xz -C ${TOPDIR}/nginx-1.9.9/
-	cd ${TOPDIR}/nginx-1.9.9 && dpkg-buildpackage -us -uc -tc
+	cp -a src/nginx-1.9.10.tar.gz ${TOPDIR}/nginx_1.9.10.orig.tar.gz
+	cp -a src/debian.tar.xz ${TOPDIR}/nginx_1.9.10-1.debian.tar.xz
+	tar -xvzf ${TOPDIR}/nginx_1.9.10.orig.tar.gz -C ${TOPDIR}/
+	tar -xvJf ${TOPDIR}/nginx_1.9.10-1.debian.tar.xz -C ${TOPDIR}/nginx-1.9.10/
+	cd ${TOPDIR}/nginx-1.9.10 && dpkg-buildpackage -us -uc -tc
 	cd ${TOPDIR} && cp -a *.deb *.xz *.dsc *.changes *.gz ../
 
 .PHONY: clean
