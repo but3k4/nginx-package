@@ -17,7 +17,7 @@
 
 Name:              nginx
 Epoch:             1
-Version:           1.9.10
+Version:           1.9.11
 Release:           1%{?dist}
 
 Summary:           A high performance web server and reverse proxy server
@@ -328,6 +328,9 @@ rm -rf $RPM_BUILD_DIR/nginx-%{version}
 %endif
 
 %changelog
+* Tue Feb 16 2016 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.11-1
+- New upstream release.
+
 * Mon Feb 08 2016 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.10-1
 - New upstream release.
 
