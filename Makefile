@@ -20,7 +20,8 @@ DEB:
 	cp -a src/debian.tar.xz ${TOPDIR}/nginx_1.9.11-1.debian.tar.xz
 	tar -xvzf ${TOPDIR}/nginx_1.9.11.orig.tar.gz -C ${TOPDIR}/
 	tar -xvJf ${TOPDIR}/nginx_1.9.11-1.debian.tar.xz -C ${TOPDIR}/nginx-1.9.11/
-	cd ${TOPDIR}/nginx-1.9.11 && dpkg-buildpackage -us -uc -tc
+	tar -xvzf src/modules.tar.gz -C ${TOPDIR}/nginx-1.9.11/debian/
+	cd ${TOPDIR}/nginx-1.9.11 && dpkg-buildpackage -us -uc -sa -tc
 	cd ${TOPDIR} && cp -a *.deb *.xz *.dsc *.changes *.gz ../
 
 .PHONY: clean
