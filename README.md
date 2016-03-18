@@ -79,8 +79,8 @@ To install the package use:
 
 ```bash
 
-yum localinstall ../nginx-1.9.11-1.el7.x86_64.rpm \
-    ../nginx-filesystem-1.9.11-1.el7.noarch.rpm
+yum localinstall ../nginx-1.9.12-1.el7.x86_64.rpm \
+    ../nginx-filesystem-1.9.12-1.el7.noarch.rpm
 
 ```
 ## Debian
@@ -113,6 +113,6 @@ To install the package use:
 
 ```bash
 
-dpkg -i ../nginx-common_1.9.11-1_all.deb ../nginx-extras_1.9.11-1_amd64.deb
+dpkg -i ../nginx-common_1.9.12-1_all.deb ../nginx-extras_1.9.12-1_amd64.deb
 
 ```
