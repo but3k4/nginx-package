@@ -59,6 +59,7 @@ BuildRequires:     zlib-devel
 BuildRequires:     expat-devel
 BuildRequires:     lua-devel
 BuildRequires:     pam-devel
+BuildRequires:     libmaxminddb-devel
 
 Requires:          nginx-filesystem = %{epoch}:%{version}-%{release}
 Requires:          GeoIP
