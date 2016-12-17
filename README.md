@@ -27,6 +27,9 @@ The third party modules are:
 * fancyindex<br/>
   https://github.com/aperezdc/ngx-fancyindex
 
+* geoip2<br/>
+  https://github.com/leev/ngx_http_geoip2_module
+
 * headers-more<br/>
   https://github.com/agentzh/headers-more-nginx-module
 
@@ -39,6 +42,9 @@ The third party modules are:
 * lua<br/>
   https://github.com/chaoslawful/lua-nginx-module
 
+* nchan<br/>
+  https://github.com/slact/nchan
+
 * sticky<br/>
   https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng
 
@@ -46,18 +52,25 @@ The third party modules are:
   https://github.com/masterzen/nginx-upload-progress-module<br/>
   rm -r upload-progress/test
 
+* upstream-check<br/>
+  https://github.com/yaoweibin/nginx_upstream_check_module
+
 * upstream-fair<br/>
   https://github.com/gnosek/nginx-upstream-fair
 
 ## CentOS
 
-To install the build dependencies, use the command below:
+To install the build dependencies, use the commands below:
 
 ```bash
 
 yum install -y ftp git-core rpm-build make gcc patch bzip2 GeoIP-devel gd-devel \
     libxslt-devel openssl-devel pcre-devel perl-devel perl-ExtUtils-Embed \
     zlib-devel expat-devel lua-devel pam-devel
+
+rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+
+yum --enablerepo=epel install -y libmaxminddb libmaxminddb-devel
 
 ```
 
@@ -79,19 +92,28 @@ To install the package use:
 
 ```bash
 
-yum localinstall ../nginx-1.9.12-1.el7.x86_64.rpm \
-    ../nginx-filesystem-1.9.12-1.el7.noarch.rpm
+rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+
+yum --enablerepo=epel install -y libmaxminddb
+
+yum localinstall ../nginx-1.11.7-1.el7.x86_64.rpm \
+    ../nginx-filesystem-1.11.7-1.el7.noarch.rpm
 
 ```
 ## Debian
 
-To install the build dependencies, use the command below:
+To install the build dependencies, use the commands below:
 
 ```bash
+echo "deb http://deb.debian.org/debian jessie-backports main contrib non-free" \
+> /etc/apt/sources.list.d/backports.list
+
+apt-get update
 
 apt-get install -y ftp git-core dialog dh-make build-essential devscripts wget \
 autotools-dev dh-systemd libluajit-5.1-dev libexpat-dev libgd2-dev libgeoip-dev \
-libmhash-dev libpam0g-dev libpcre3-dev libperl-dev libssl-dev libxslt1-dev
+libmhash-dev libpam0g-dev libpcre3-dev libperl-dev libssl-dev libxslt1-dev \
+libmaxminddb-dev libmaxminddb0
 
 ```
 
@@ -113,6 +135,13 @@ To install the package use:
 
 ```bash
 
-dpkg -i ../nginx-common_1.9.12-1_all.deb ../nginx-extras_1.9.12-1_amd64.deb
+echo "deb http://deb.debian.org/debian jessie-backports main contrib non-free" \
+> /etc/apt/sources.list.d/backports.list
+
+apt-get update
+
+apt-get install -y libmaxminddb0
+
+dpkg -i ../nginx-common_1.11.7-1_all.deb ../nginx-extras_1.11.7-1_amd64.deb
 
 ```

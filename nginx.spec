@@ -17,7 +17,7 @@
 
 Name:              nginx
 Epoch:             1
-Version:           1.9.12
+Version:           1.11.7
 Release:           1%{?dist}
 
 Summary:           A high performance web server and reverse proxy server
@@ -131,14 +131,13 @@ export DESTDIR=%{buildroot}
 %if 0%{?with_aio}
     --with-file-aio \
 %endif
-    --with-ipv6 \
+    --with-compat \
     --with-http_ssl_module \
     --with-http_v2_module \
     --with-http_realip_module \
     --with-http_addition_module \
     --with-http_xslt_module \
     --with-http_image_filter_module \
-    --with-http_geoip_module \
     --with-http_sub_module \
     --with-http_dav_module \
     --with-http_flv_module \
@@ -150,8 +149,12 @@ export DESTDIR=%{buildroot}
     --with-http_degradation_module \
     --with-http_stub_status_module \
     --with-http_perl_module \
+    --with-http_slice_module \
     --with-threads \
     --with-stream \
+    --with-stream_geoip_module \
+    --with-stream_realip_module \
+    --with-stream_ssl_preread_module \
     --with-stream_ssl_module \
     --with-mail \
     --with-mail_ssl_module \
@@ -159,6 +162,7 @@ export DESTDIR=%{buildroot}
     --with-pcre-jit \
     --with-http_auth_request_module \
     --add-module=%{MODULESDIR}/headers-more-nginx-module \
+    --add-module=%{MODULESDIR}/nchan \
     --add-module=%{MODULESDIR}/nginx-auth-pam \
     --add-module=%{MODULESDIR}/nginx-cache-purge \
     --add-module=%{MODULESDIR}/nginx-dav-ext-module \
@@ -168,7 +172,9 @@ export DESTDIR=%{buildroot}
     --add-module=%{MODULESDIR}/nginx-sticky \
     --add-module=%{MODULESDIR}/nginx-upload-progress \
     --add-module=%{MODULESDIR}/nginx-upstream-fair \
+    --add-module=%{MODULESDIR}/nginx_upstream_check_module \
     --add-module=%{MODULESDIR}/ngx-fancyindex \
+    --add-module=%{MODULESDIR}/ngx_http_geoip2_module \
     --add-module=%{MODULESDIR}/ngx_http_substitutions_filter_module \
     --with-debug \
     --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
@@ -328,6 +334,22 @@ rm -rf $RPM_BUILD_DIR/nginx-%{version}
 %endif
 
 %changelog
+* Sat Dec 17 2016 Claudio Borges <cbsfilho@gmail.com> - 1:1.11.7-1
+- New upstream release
+- Removing ipv6 option (now it's built in)
+- Replacing geoip module to geoip 2
+- Enabling the following options:
+  --with-compat
+  --with-http_slice_module
+  --with-stream_geoip_module
+  --with-stream_realip_module
+  --with-stream_ssl_preread_module
+- Adding new modules:
+  nchan
+  nginx_upstream_check_module
+  ngx_http_geoip2_module
+- Update third party modules
+
 * Fri Mar 18 2016 Claudio Borges <cbsfilho@gmail.com> - 1:1.9.12-1
 - New upstream release.
 
