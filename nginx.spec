@@ -139,6 +139,7 @@ export DESTDIR=%{buildroot}
     --with-http_addition_module \
     --with-http_xslt_module \
     --with-http_image_filter_module \
+    --with-http_geoip_module \
     --with-http_sub_module \
     --with-http_dav_module \
     --with-http_flv_module \
@@ -338,7 +339,6 @@ rm -rf $RPM_BUILD_DIR/nginx-%{version}
 * Sat Dec 17 2016 Claudio Borges <cbsfilho@gmail.com> - 1:1.11.7-1
 - New upstream release
 - Removing ipv6 option (now it's built in)
-- Replacing geoip module to geoip 2
 - Enabling the following options:
   --with-compat
   --with-http_slice_module
