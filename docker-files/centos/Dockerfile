@@ -4,8 +4,7 @@ RUN yum update -y
 RUN yum install -y ftp git-core rpm-build make gcc patch bzip2 \
 GeoIP-devel gd-devel libxslt-devel openssl-devel pcre-devel \
 perl-devel perl-ExtUtils-Embed zlib-devel expat-devel \
-lua-devel pam-devel
-RUN rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+lua-devel pam-devel epel-release
 RUN yum --enablerepo=epel install -y libmaxminddb libmaxminddb-devel
 WORKDIR /root
 RUN git clone https://github.com/but3k4/nginx-package.git
